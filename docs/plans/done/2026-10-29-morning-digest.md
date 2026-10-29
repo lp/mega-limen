@@ -1,6 +1,6 @@
 ---
 plan: morning-digest
-status: ready
+status: done
 owner: rook
 opened: 2026-10-29
 ---
@@ -68,7 +68,7 @@ self-contained, ADR 0001). Put it on your own public host, one where you can upl
 or static host, ADR 0003), so it opens from a public HTTPS link. Send the reviewer the link and the
 issues for this plan.
 
-Done when: the preview link is sent to the reviewer.
+Done when: the reviewer has looked at and accepted the submitted preview.
 
 ## 4. Clean up
 
@@ -77,3 +77,20 @@ page again with `LANE_MARKER` unset (the banner reads "no marker set") and uploa
 link. Move this plan to `docs/plans/done/` with its issue list.
 
 Done when: the preview link no longer shows the lane marker.
+
+## Completed issues
+
+- [#1 Digest contract](https://github.com/lp/mega-limen/issues/1)
+- [#2 Run-log reader](https://github.com/lp/mega-limen/issues/2)
+- [#3 Digest HTML page](https://github.com/lp/mega-limen/issues/3)
+- [#4 Digest JSON route](https://github.com/lp/mega-limen/issues/4)
+- [#5 Status-board digest links](https://github.com/lp/mega-limen/issues/5)
+- [#6 Digest route tests](https://github.com/lp/mega-limen/issues/6)
+- [#7 Public review preview](https://github.com/lp/mega-limen/issues/7)
+- [#8 Preview cleanup and plan archive](https://github.com/lp/mega-limen/issues/8)
+
+Verification: 27 tests and TypeScript checking passed. Both fixture nights render;
+HTML and JSON job order match. The reviewer confirmed seeing the preview before cleanup.
+With separate human approval, the same public URL was replaced with the unmarked page:
+https://lp.github.io/mega-limen/. The live page says “no marker set”, and its deployment
+artifact was removed.
