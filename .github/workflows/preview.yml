@@ -1,0 +1,61 @@
+name: Publish digest preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      lane_marker:
+        description: Lane marker for review; leave empty only after review and cleanup approval
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-preview
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+      - run: mise exec -- pnpm install --frozen-lockfile
+      - uses: actions/configure-pages@v5
+      - name: Export running service page
+        env:
+          LANE_MARKER: ${{ inputs.lane_marker }}
+        run: |
+          mkdir -p preview
+          mise exec -- pnpm start &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --output /dev/null http://localhost:8787/health; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent --show-error --output preview/index.html http://localhost:8787/digest/2026-10-28
+      - uses: actions/upload-pages-artifact@v4
+        id: artifact
+        with:
+          path: preview
+          retention-days: 1
+      - uses: actions/deploy-pages@v4
+        id: deployment
+      - name: Remove exported HTML artifact after deployment
+        if: ${{ always() && steps.artifact.outputs.artifact_id != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.artifact.outputs.artifact_id }}
+        run: gh api --method DELETE "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID"
