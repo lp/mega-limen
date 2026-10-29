@@ -37,3 +37,6 @@ artifact after deployment; no preview HTML belongs in Git.
 After review arrives, obtain separate approval, then dispatch the same workflow with an
 empty marker. This replaces the same URL with a page saying “no marker set”.
 Verify the live URL before closing cleanup and archiving the plan with its issue links.
+
+Keep the review issue open after sending the link. Delivery is not review acceptance:
+close it only after the reviewer has looked and accepted the preview.
