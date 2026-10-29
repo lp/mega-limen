@@ -36,6 +36,9 @@ jobs:
           LANE_MARKER: ${{ inputs.lane_marker }}
         run: |
           mkdir -p preview
+          if [ -z "$LANE_MARKER" ]; then
+            unset LANE_MARKER
+          fi
           mise exec -- pnpm start &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
